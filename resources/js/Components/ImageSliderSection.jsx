@@ -2,18 +2,27 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
+const objectPositionClass = {
+    top: 'object-top',
+    center: 'object-center',
+    bottom: 'object-bottom',
+};
+
 const defaultSlides = [
     {
         src: 'https://images.unsplash.com/photo-1512632578888-169bbbc64f33?auto=format&fit=crop&w=1600&q=80',
         alt: 'Salida procesional de la hermandad',
+        objectPosition: 'center',
     },
     {
         src: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=80',
         alt: 'Detalle patrimonial y ambiente solemne',
+        objectPosition: 'center',
     },
     {
         src: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1600&q=80',
         alt: 'Comunidad reunida en acto religioso',
+        objectPosition: 'center',
     },
 ];
 
@@ -31,6 +40,7 @@ export default function ImageSliderSection() {
                 locale === 'en'
                     ? slide.alt_en || slide.alt_es || 'Hero slide'
                     : slide.alt_es || slide.alt_en || 'Slide principal',
+            objectPosition: slide.object_position ?? 'center',
         }));
 
     const resolvedSlides =
@@ -54,7 +64,7 @@ export default function ImageSliderSection() {
                 <img
                     src={resolvedSlides[current].src}
                     alt={resolvedSlides[current].alt}
-                    className="h-72 w-full object-cover sm:h-96 lg:h-[32rem]"
+                    className={`h-72 w-full object-cover sm:h-96 lg:h-[32rem] ${objectPositionClass[resolvedSlides[current].objectPosition] ?? 'object-center'}`}
                     loading="lazy"
                 />
 
