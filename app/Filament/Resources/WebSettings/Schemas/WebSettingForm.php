@@ -315,8 +315,10 @@ class WebSettingForm
                                                     ->imageEditorViewportWidth(1920)
                                                     ->imageEditorViewportHeight(640)
                                                     ->required(fn (): bool => self::activeMainTab() === 'slider')
-                                                    ->live(debounce: 400),
+                                                    ->live(debounce: 400)
+                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
                                                 View::make('filament.forms.components.hero-slide-preview')
+                                                    ->key('heroSlidePreview')
                                                     ->columnSpanFull(),
                                                 Slider::make('focus_x')
                                                     ->label('Encuadre horizontal (%)')
@@ -324,21 +326,24 @@ class WebSettingForm
                                                     ->range(0, 100)
                                                     ->default(50)
                                                     ->step(1)
-                                                    ->live(debounce: 250),
+                                                    ->live()
+                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
                                                 Slider::make('focus_y')
                                                     ->label('Encuadre vertical (%)')
                                                     ->helperText('0 = arriba, 50 = centro, 100 = abajo.')
                                                     ->range(0, 100)
                                                     ->default(50)
                                                     ->step(1)
-                                                    ->live(debounce: 250),
+                                                    ->live()
+                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
                                                 Slider::make('focus_zoom')
                                                     ->label('Zoom (%)')
                                                     ->helperText('100 = sin zoom; subir acerca el encuadre (desde el punto elegido arriba).')
                                                     ->range(100, 220)
                                                     ->default(100)
                                                     ->step(5)
-                                                    ->live(debounce: 250),
+                                                    ->live()
+                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
                                                 TextInput::make('alt_es')
                                                     ->label('Texto alternativo (ES)')
                                                     ->maxLength(255),
