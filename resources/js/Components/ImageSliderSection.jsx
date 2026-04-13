@@ -2,35 +2,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 
-function clamp(n, min, max) {
-    return Math.min(max, Math.max(min, n));
-}
-
-function normalizeSlideObjectPosition(raw) {
-    const v = String(raw ?? 'center')
-        .toLowerCase()
-        .trim();
-    if (v === 'top' || v === 'arriba') {
-        return 'top';
-    }
-    if (v === 'bottom' || v === 'abajo') {
-        return 'bottom';
-    }
-
-    return 'center';
-}
-
-function legacyFocusYFromPosition(pos) {
-    if (pos === 'top') {
-        return 12;
-    }
-    if (pos === 'bottom') {
-        return 88;
-    }
-
-    return 50;
-}
-
 function slideToViewModel(slide, locale) {
     const src = slide.image?.startsWith('http') ? slide.image : `/storage/${slide.image}`;
     const alt =
@@ -38,32 +9,7 @@ function slideToViewModel(slide, locale) {
             ? slide.alt_en || slide.alt_es || 'Hero slide'
             : slide.alt_es || slide.alt_en || 'Slide principal';
 
-    let focusX = Number(slide.focus_x);
-    let focusY = Number(slide.focus_y);
-    let zoomPct = Number(slide.focus_zoom);
-
-    if (!Number.isFinite(focusX)) {
-        focusX = 50;
-    }
-    if (!Number.isFinite(focusY)) {
-        const legacy = normalizeSlideObjectPosition(slide.object_position);
-        focusY = legacyFocusYFromPosition(legacy);
-    }
-    if (!Number.isFinite(zoomPct) || zoomPct < 100) {
-        zoomPct = 100;
-    }
-
-    focusX = clamp(Math.round(focusX), 0, 100);
-    focusY = clamp(Math.round(focusY), 0, 100);
-    zoomPct = clamp(Math.round(zoomPct), 100, 220);
-
-    return {
-        src,
-        alt,
-        focusX,
-        focusY,
-        zoom: zoomPct / 100,
-    };
+    return { src, alt };
 }
 
 const defaultSlides = [
@@ -71,25 +17,16 @@ const defaultSlides = [
         image: 'https://images.unsplash.com/photo-1512632578888-169bbbc64f33?auto=format&fit=crop&w=1600&q=80',
         alt_es: 'Salida procesional de la hermandad',
         alt_en: 'Brotherhood procession',
-        focus_x: 50,
-        focus_y: 50,
-        focus_zoom: 100,
     },
     {
         image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1600&q=80',
         alt_es: 'Detalle patrimonial y ambiente solemne',
         alt_en: 'Heritage and solemn atmosphere',
-        focus_x: 50,
-        focus_y: 50,
-        focus_zoom: 100,
     },
     {
         image: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?auto=format&fit=crop&w=1600&q=80',
         alt_es: 'Comunidad reunida en acto religioso',
         alt_en: 'Community gathered in religious event',
-        focus_x: 50,
-        focus_y: 50,
-        focus_zoom: 100,
     },
 ];
 
@@ -146,16 +83,11 @@ export default function ImageSliderSection() {
                             src={slide.src}
                             alt={i === current ? slide.alt : ''}
                             aria-hidden={i !== current}
-                            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-in-out motion-reduce:transition-none ${
+                            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-in-out motion-reduce:transition-none ${
                                 i === current
                                     ? 'z-[1] opacity-100'
                                     : 'z-0 opacity-0 pointer-events-none'
                             }`}
-                            style={{
-                                objectPosition: `${slide.focusX}% ${slide.focusY}%`,
-                                transform: `scale(${slide.zoom})`,
-                                transformOrigin: `${slide.focusX}% ${slide.focusY}%`,
-                            }}
                             loading={i < 3 ? 'eager' : 'lazy'}
                             decoding="async"
                         />

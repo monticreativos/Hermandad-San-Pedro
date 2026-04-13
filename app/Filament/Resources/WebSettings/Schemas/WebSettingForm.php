@@ -4,13 +4,11 @@ namespace App\Filament\Resources\WebSettings\Schemas;
 
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 
 class WebSettingForm
@@ -296,7 +294,7 @@ class WebSettingForm
                             ->id('slider')
                             ->schema([
                                 Section::make('Slider de portada')
-                                    ->description('Al subir la imagen se abre el editor (estilo recorte de avatar): puede arrastrar, hacer zoom y elegir proporcion 21:9, 16:9 o libre. La vista previa debajo refleja encuadre y zoom como en la web; ajuste fino con los tres controles.')
+                                    ->description('En la web las imagenes se muestran con recorte centrado (object-fit cover, centro). Suba archivos con buena resolucion (por ejemplo ~1920px de ancho). El editor opcional sirve para encuadrar en 21:9, 16:9 o libre antes de guardar.')
                                     ->schema([
                                         Repeater::make('hero_slides')
                                             ->label('Imagenes del slider')
@@ -314,36 +312,7 @@ class WebSettingForm
                                                     ])
                                                     ->imageEditorViewportWidth(1920)
                                                     ->imageEditorViewportHeight(640)
-                                                    ->required(fn (): bool => self::activeMainTab() === 'slider')
-                                                    ->live(debounce: 400)
-                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
-                                                View::make('filament.forms.components.hero-slide-preview')
-                                                    ->key('heroSlidePreview')
-                                                    ->columnSpanFull(),
-                                                Slider::make('focus_x')
-                                                    ->label('Encuadre horizontal (%)')
-                                                    ->helperText('0 = izquierda, 50 = centro, 100 = derecha.')
-                                                    ->range(0, 100)
-                                                    ->default(50)
-                                                    ->step(1)
-                                                    ->live()
-                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
-                                                Slider::make('focus_y')
-                                                    ->label('Encuadre vertical (%)')
-                                                    ->helperText('0 = arriba, 50 = centro, 100 = abajo.')
-                                                    ->range(0, 100)
-                                                    ->default(50)
-                                                    ->step(1)
-                                                    ->live()
-                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
-                                                Slider::make('focus_zoom')
-                                                    ->label('Zoom (%)')
-                                                    ->helperText('100 = sin zoom; subir acerca el encuadre (desde el punto elegido arriba).')
-                                                    ->range(100, 220)
-                                                    ->default(100)
-                                                    ->step(5)
-                                                    ->live()
-                                                    ->partiallyRenderComponentsAfterStateUpdated(['heroSlidePreview']),
+                                                    ->required(fn (): bool => self::activeMainTab() === 'slider'),
                                                 TextInput::make('alt_es')
                                                     ->label('Texto alternativo (ES)')
                                                     ->maxLength(255),
