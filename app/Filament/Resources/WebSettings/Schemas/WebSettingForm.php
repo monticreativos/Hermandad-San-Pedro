@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\WebSettings\Schemas;
 
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -295,7 +295,7 @@ class WebSettingForm
                             ->id('slider')
                             ->schema([
                                 Section::make('Slider de portada')
-                                    ->description('Imagenes del carrusel de inicio. Cada diapositiva empieza plegada. Altura fija por tamano de pantalla (movil ~288px, tablet ~384px, escritorio ~512px); el ancho sigue al contenedor (max. ~1440px). Con object-cover las verticales se recortan arriba/abajo: use «Foco del recorte».')
+                                    ->description('Al subir la imagen se abre el editor (estilo recorte de avatar): puede arrastrar, hacer zoom y elegir proporcion 21:9, 16:9 o libre. Despues ajuste fino con los tres controles siguientes.')
                                     ->schema([
                                         Repeater::make('hero_slides')
                                             ->label('Imagenes del slider')
@@ -305,17 +305,33 @@ class WebSettingForm
                                                     ->image()
                                                     ->disk('public')
                                                     ->directory('hero-slides')
-                                                    ->required(fn (): bool => self::activeMainTab() === 'slider'),
-                                                Select::make('object_position')
-                                                    ->label('Foco del recorte (vertical)')
-                                                    ->options([
-                                                        'top' => 'Arriba',
-                                                        'center' => 'Centro',
-                                                        'bottom' => 'Abajo',
+                                                    ->imageEditor()
+                                                    ->imageEditorAspectRatioOptions([
+                                                        '21/9',
+                                                        '16/9',
+                                                        null,
                                                     ])
-                                                    ->default('center')
-                                                    ->native(false)
-                                                    ->helperText('Solo afecta a como se enmarca la foto con el recorte automatico (sobre todo retratos).'),
+                                                    ->imageEditorViewportWidth(1920)
+                                                    ->imageEditorViewportHeight(640)
+                                                    ->required(fn (): bool => self::activeMainTab() === 'slider'),
+                                                Slider::make('focus_x')
+                                                    ->label('Encuadre horizontal (%)')
+                                                    ->helperText('0 = izquierda, 50 = centro, 100 = derecha.')
+                                                    ->range(0, 100)
+                                                    ->default(50)
+                                                    ->step(1),
+                                                Slider::make('focus_y')
+                                                    ->label('Encuadre vertical (%)')
+                                                    ->helperText('0 = arriba, 50 = centro, 100 = abajo.')
+                                                    ->range(0, 100)
+                                                    ->default(50)
+                                                    ->step(1),
+                                                Slider::make('focus_zoom')
+                                                    ->label('Zoom (%)')
+                                                    ->helperText('100 = sin zoom; subir acerca el encuadre (desde el punto elegido arriba).')
+                                                    ->range(100, 220)
+                                                    ->default(100)
+                                                    ->step(5),
                                                 TextInput::make('alt_es')
                                                     ->label('Texto alternativo (ES)')
                                                     ->maxLength(255),

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\WebSetting;
+use App\Support\HeroSlideNormalizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Inertia\Middleware;
@@ -10,32 +11,6 @@ use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * Foco vertical del slider (Filament Select o valores legibles en español).
-     *
-     * @return 'top'|'center'|'bottom'
-     */
-    private static function normalizeHeroSlideFocal(mixed $raw): string
-    {
-        if ($raw === null || $raw === '') {
-            return 'center';
-        }
-
-        if (! is_string($raw)) {
-            return 'center';
-        }
-
-        $v = strtolower(trim($raw));
-        if ($v === 'top' || str_contains($v, 'arriba')) {
-            return 'top';
-        }
-        if ($v === 'bottom' || str_contains($v, 'abajo')) {
-            return 'bottom';
-        }
-
-        return 'center';
-    }
-
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -78,18 +53,7 @@ class HandleInertiaRequests extends Middleware
                 $data = $setting->toArray();
 
                 if (! empty($data['hero_slides']) && is_array($data['hero_slides'])) {
-                    $data['hero_slides'] = collect($data['hero_slides'])
-                        ->map(function ($slide) {
-                            if (! is_array($slide)) {
-                                return $slide;
-                            }
-                            $raw = $slide['object_position'] ?? $slide['objectPosition'] ?? null;
-                            $slide['object_position'] = self::normalizeHeroSlideFocal($raw);
-
-                            return $slide;
-                        })
-                        ->values()
-                        ->all();
+                    $data['hero_slides'] = HeroSlideNormalizer::normalizeSlides($data['hero_slides']);
                 }
 
                 return $data;

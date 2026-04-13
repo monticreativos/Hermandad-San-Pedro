@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\WebSettings\Pages;
 
 use App\Filament\Resources\WebSettings\WebSettingResource;
+use App\Support\HeroSlideNormalizer;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -29,6 +30,10 @@ class EditWebSetting extends EditRecord
             'route_name' => 'contact.index',
             'external_url' => null,
         ], $data['donation_footer'] ?? []);
+
+        if (! empty($data['hero_slides']) && is_array($data['hero_slides'])) {
+            $data['hero_slides'] = HeroSlideNormalizer::normalizeSlides($data['hero_slides']);
+        }
 
         return $data;
     }
