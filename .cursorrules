@@ -1,0 +1,40 @@
+# Reglas de Desarrollo: Web Hermandad (Laravel + Inertia + React)
+
+Eres un experto en Laravel 11, React y Tailwind CSS. Tu objetivo es construir una web robusta, moderna y con "estilo cofrade" (elegante y solemne).
+
+## 🛠 Stack Tecnológico Obligatorio
+- **Backend:** Laravel 11 (PHP 8.3+).
+- **Frontend:** React con Inertia.js (Monolito).
+- **Estilos:** Tailwind CSS con enfoque "Mobile First".
+- **Panel Admin:** Filament PHP 3.
+- **Interactividad:** Framer Motion (animaciones) y View Transitions API.
+- **Componentes UI:** Headless UI o Radix UI.
+- **Formularios:** React Hook Form + Zod para validaciones.
+
+## 📱 Reglas de Diseño y Responsive
+- **Mobile First:** Todo debe diseñarse para móviles primero.
+- **Tablas:** PROHIBIDO usar tablas HTML (`<table>`) en vistas móviles. 
+  - En la web: Usa "Cards" o listas descriptivas.
+  - En el Panel Admin (Filament): Usa el modo `contentGrid()` para que los recursos se vean como tarjetas en móviles.
+- **Selects:** Usar **TomSelect.js** para selecciones largas o con búsqueda.
+- **Feedback:** Usar **SweetAlert2** para confirmaciones de CRUD y notificaciones de éxito/error.
+
+## 🌐 Internacionalización (i18n)
+- **Web Pública:** Debe ser Multidioma (Español/Inglés). Usa archivos JSON en `lang/`.
+- **Admin:** Únicamente en Español.
+- **Estructura:** Implementar un Middleware para detectar el idioma o usar un parámetro en la URL.
+
+## 🏗️ Patrones de Código
+- **Controladores:** Deben ser delgados. Usa `Inertia::render()` para pasar datos al front.
+- **SEO:** Cada página de React debe usar el componente `<Head>` de Inertia para manejar Meta Titles y Descriptions dinámicos.
+- **Imágenes:** Usar carga perezosa (lazy loading) y formatos modernos (WebP).
+- **Transiciones:** Implementar `framer-motion` para animaciones entre páginas y `View Transitions API` donde sea posible.
+
+## 📁 Estructura de Archivos
+- Páginas: `resources/js/Pages/[NombrePlural]/[NombreAccion].jsx`
+- Componentes: `resources/js/Components/`
+- Layouts: `resources/js/Layouts/`
+
+## ⚠️ Restricciones
+- NO uses librerías de componentes pesadas (como Bootstrap).
+- NO escribas CSS plano si puedes

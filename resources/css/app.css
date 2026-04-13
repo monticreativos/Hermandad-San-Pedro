@@ -1,0 +1,148 @@
+@font-face {
+    font-family: 'Helvetica 255';
+    src: url('/assets/fonts/helvetica-255-webfont/helvetica-light-587ebe5a59211.woff')
+        format('woff');
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica 255';
+    src: url('/assets/fonts/helvetica-255-webfont/Helvetica.woff') format('woff');
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica 255';
+    src: url('/assets/fonts/helvetica-255-webfont/Helvetica-Oblique.woff')
+        format('woff');
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica 255';
+    src: url('/assets/fonts/helvetica-255-webfont/Helvetica-Bold.woff')
+        format('woff');
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Helvetica 255';
+    src: url('/assets/fonts/helvetica-255-webfont/Helvetica-BoldOblique.woff')
+        format('woff');
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        font-family: 'Helvetica 255', 'Helvetica', 'Arial', sans-serif;
+    }
+}
+
+/* Bloques en columnas exportados desde el RichEditor de Filament */
+@layer components {
+    .rich-html .grid-layout {
+        display: grid;
+        gap: 1rem;
+        margin-block: 1rem;
+    }
+
+    .rich-html .grid-layout > .grid-layout-col {
+        @apply rounded-lg border border-zinc-200 p-4;
+    }
+
+    .agenda-event-html .grid-layout {
+        display: grid;
+        gap: 1rem;
+        margin-block: 1rem;
+    }
+
+    .agenda-event-html .grid-layout > .grid-layout-col {
+        @apply rounded-lg border border-zinc-200 p-4;
+    }
+
+    /* Historia hermandad: fotos de archivo en B/N (rutas en public/assets/img/historia/) */
+    .rich-html figure.historia-foto {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 2.25rem;
+        margin-bottom: 2.25rem;
+        max-width: 42rem;
+    }
+
+    .rich-html figure.historia-foto img {
+        width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        filter: grayscale(1);
+        box-shadow:
+            0 1px 3px 0 rgb(0 0 0 / 0.08),
+            0 4px 12px -2px rgb(0 0 0 / 0.12);
+    }
+
+    .rich-html figure.historia-foto figcaption {
+        margin-top: 0.625rem;
+        text-align: center;
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        color: rgb(82 82 91);
+    }
+
+    /*
+     * Heráldica: Filament RichContentRenderer elimina <figure>/<figcaption> del HTML.
+     * El escudo queda como <img> dentro de <p>; prose-img:max-w-full lo estira al ancho del artículo.
+     * Acotamos TODAS las imágenes del artículo heráldica desde el <article> (selector estable).
+     */
+    article.brotherhood-article--heraldica .rich-html img {
+        display: block !important;
+        width: auto !important;
+        max-width: min(13rem, 78vw) !important;
+        height: auto !important;
+        max-height: min(36vh, 17rem) !important;
+        object-fit: contain !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        border-radius: 0.75rem !important;
+        padding: 0.75rem !important;
+        background: rgb(9 9 11 / 0.05) !important;
+        box-shadow:
+            0 1px 3px 0 rgb(0 0 0 / 0.08),
+            0 4px 12px -2px rgb(0 0 0 / 0.12) !important;
+        box-sizing: border-box !important;
+    }
+
+    @media (min-width: 640px) {
+        article.brotherhood-article--heraldica .rich-html img {
+            max-width: min(15rem, 40vw) !important;
+            max-height: min(40vh, 19rem) !important;
+            padding: 1rem !important;
+        }
+    }
+
+    /* Pie del escudo: primer párrafo de texto tras la imagen */
+    article.brotherhood-article--heraldica .rich-html > p:first-of-type:has(img) + p {
+        text-align: center !important;
+        font-size: 0.8125rem !important;
+        line-height: 1.45 !important;
+        color: rgb(82 82 91) !important;
+        margin-top: -0.25rem !important;
+        margin-bottom: 1.75rem !important;
+    }
+}
