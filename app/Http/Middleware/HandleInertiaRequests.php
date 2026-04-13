@@ -11,6 +11,32 @@ use Tighten\Ziggy\Ziggy;
 class HandleInertiaRequests extends Middleware
 {
     /**
+     * Foco vertical del slider (Filament Select o valores legibles en español).
+     *
+     * @return 'top'|'center'|'bottom'
+     */
+    private static function normalizeHeroSlideFocal(mixed $raw): string
+    {
+        if ($raw === null || $raw === '') {
+            return 'center';
+        }
+
+        if (! is_string($raw)) {
+            return 'center';
+        }
+
+        $v = strtolower(trim($raw));
+        if ($v === 'top' || str_contains($v, 'arriba')) {
+            return 'top';
+        }
+        if ($v === 'bottom' || str_contains($v, 'abajo')) {
+            return 'bottom';
+        }
+
+        return 'center';
+    }
+
+    /**
      * The root template that is loaded on the first page visit.
      *
      * @var string
@@ -43,7 +69,31 @@ class HandleInertiaRequests extends Middleware
             ],
             'locale' => app()->getLocale(),
             'locales' => ['es', 'en'],
-            'webSettings' => fn () => WebSetting::query()->find(1),
+            'webSettings' => function (): ?array {
+                $setting = WebSetting::query()->find(1);
+                if ($setting === null) {
+                    return null;
+                }
+
+                $data = $setting->toArray();
+
+                if (! empty($data['hero_slides']) && is_array($data['hero_slides'])) {
+                    $data['hero_slides'] = collect($data['hero_slides'])
+                        ->map(function ($slide) {
+                            if (! is_array($slide)) {
+                                return $slide;
+                            }
+                            $raw = $slide['object_position'] ?? $slide['objectPosition'] ?? null;
+                            $slide['object_position'] = self::normalizeHeroSlideFocal($raw);
+
+                            return $slide;
+                        })
+                        ->values()
+                        ->all();
+                }
+
+                return $data;
+            },
             'translations' => function (): array {
                 $locale = app()->getLocale();
                 $path = lang_path("{$locale}.json");

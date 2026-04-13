@@ -79,7 +79,8 @@ export default function ImageSliderSection() {
                 <img
                     src={resolvedSlides[current].src}
                     alt={resolvedSlides[current].alt}
-                    className="h-72 w-full object-cover sm:h-96 lg:h-[32rem]"
+                    className="hero-slider__img h-72 w-full object-cover sm:h-96 lg:h-[32rem]"
+                    data-hero-focal={resolvedSlides[current].objectPosition}
                     style={{
                         objectPosition:
                             objectPositionStyle[resolvedSlides[current].objectPosition] ??
