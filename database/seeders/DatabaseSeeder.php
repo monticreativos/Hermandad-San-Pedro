@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
                     'es' => 'Acceder',
                     'en' => 'Login',
                 ],
-                'cta_url' => '/login',
+                'cta_url' => '/admin',
                 'shop_url' => null,
                 'menu_items' => [
                     [
