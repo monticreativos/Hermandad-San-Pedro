@@ -10,6 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 
 class WebSettingForm
@@ -295,7 +296,7 @@ class WebSettingForm
                             ->id('slider')
                             ->schema([
                                 Section::make('Slider de portada')
-                                    ->description('Al subir la imagen se abre el editor (estilo recorte de avatar): puede arrastrar, hacer zoom y elegir proporcion 21:9, 16:9 o libre. Despues ajuste fino con los tres controles siguientes.')
+                                    ->description('Al subir la imagen se abre el editor (estilo recorte de avatar): puede arrastrar, hacer zoom y elegir proporcion 21:9, 16:9 o libre. La vista previa debajo refleja encuadre y zoom como en la web; ajuste fino con los tres controles.')
                                     ->schema([
                                         Repeater::make('hero_slides')
                                             ->label('Imagenes del slider')
@@ -313,25 +314,31 @@ class WebSettingForm
                                                     ])
                                                     ->imageEditorViewportWidth(1920)
                                                     ->imageEditorViewportHeight(640)
-                                                    ->required(fn (): bool => self::activeMainTab() === 'slider'),
+                                                    ->required(fn (): bool => self::activeMainTab() === 'slider')
+                                                    ->live(debounce: 400),
+                                                View::make('filament.forms.components.hero-slide-preview')
+                                                    ->columnSpanFull(),
                                                 Slider::make('focus_x')
                                                     ->label('Encuadre horizontal (%)')
                                                     ->helperText('0 = izquierda, 50 = centro, 100 = derecha.')
                                                     ->range(0, 100)
                                                     ->default(50)
-                                                    ->step(1),
+                                                    ->step(1)
+                                                    ->live(debounce: 250),
                                                 Slider::make('focus_y')
                                                     ->label('Encuadre vertical (%)')
                                                     ->helperText('0 = arriba, 50 = centro, 100 = abajo.')
                                                     ->range(0, 100)
                                                     ->default(50)
-                                                    ->step(1),
+                                                    ->step(1)
+                                                    ->live(debounce: 250),
                                                 Slider::make('focus_zoom')
                                                     ->label('Zoom (%)')
                                                     ->helperText('100 = sin zoom; subir acerca el encuadre (desde el punto elegido arriba).')
                                                     ->range(100, 220)
                                                     ->default(100)
-                                                    ->step(5),
+                                                    ->step(5)
+                                                    ->live(debounce: 250),
                                                 TextInput::make('alt_es')
                                                     ->label('Texto alternativo (ES)')
                                                     ->maxLength(255),
