@@ -27,11 +27,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        $missingEvents = max(0, 3 - Event::query()->count());
-
-        if ($missingEvents > 0) {
-            Event::factory()->count($missingEvents)->create();
-        }
+        $this->seedDefaultEventCategories();
 
         $this->call(NewsSeeder::class);
 
@@ -395,6 +391,48 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->seedAgendaEventsFivePerMonth();
+    }
+
+    private function seedDefaultEventCategories(): void
+    {
+        $categories = [
+            [
+                'slug' => 'cultos',
+                'name' => ['es' => 'Cultos', 'en' => 'Worship'],
+                'color' => '#7c3aed',
+                'sort_order' => 1,
+            ],
+            [
+                'slug' => 'ensayo',
+                'name' => ['es' => 'Ensayos', 'en' => 'Rehearsals'],
+                'color' => '#2563eb',
+                'sort_order' => 2,
+            ],
+            [
+                'slug' => 'salida',
+                'name' => ['es' => 'Salidas', 'en' => 'Processions'],
+                'color' => '#d97706',
+                'sort_order' => 3,
+            ],
+            [
+                'slug' => 'otros',
+                'name' => ['es' => 'Otros', 'en' => 'Other'],
+                'color' => '#64748b',
+                'sort_order' => 4,
+            ],
+        ];
+
+        foreach ($categories as $cat) {
+            EventCategory::query()->updateOrCreate(
+                ['slug' => $cat['slug']],
+                [
+                    'name' => $cat['name'],
+                    'color' => $cat['color'],
+                    'sort_order' => $cat['sort_order'],
+                    'is_active' => true,
+                ],
+            );
+        }
     }
 
     private function seedAgendaEventsFivePerMonth(): void

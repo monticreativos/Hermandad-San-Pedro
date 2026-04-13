@@ -9,11 +9,6 @@ class NewsSeeder extends Seeder
 {
     public function run(): void
     {
-        $missingNews = max(0, 3 - News::query()->count());
-        if ($missingNews > 0) {
-            News::factory()->count($missingNews)->create();
-        }
-
         $brotherhoodNews = [
             [
                 'slug' => 'cultos-preparatorios-semana-santa',
