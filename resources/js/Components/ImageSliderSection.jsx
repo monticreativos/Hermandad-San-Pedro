@@ -2,11 +2,26 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
-const objectPositionClass = {
-    top: 'object-top',
-    center: 'object-center',
-    bottom: 'object-bottom',
+/** Valores CSS reales: evitamos clases Tailwind (object-top, etc.) que a veces no van en el CSS de producción. */
+const objectPositionStyle = {
+    top: 'center top',
+    center: 'center center',
+    bottom: 'center bottom',
 };
+
+function normalizeSlideObjectPosition(raw) {
+    const v = String(raw ?? 'center')
+        .toLowerCase()
+        .trim();
+    if (v === 'top' || v === 'arriba') {
+        return 'top';
+    }
+    if (v === 'bottom' || v === 'abajo') {
+        return 'bottom';
+    }
+
+    return 'center';
+}
 
 const defaultSlides = [
     {
@@ -40,7 +55,7 @@ export default function ImageSliderSection() {
                 locale === 'en'
                     ? slide.alt_en || slide.alt_es || 'Hero slide'
                     : slide.alt_es || slide.alt_en || 'Slide principal',
-            objectPosition: slide.object_position ?? 'center',
+            objectPosition: normalizeSlideObjectPosition(slide.object_position),
         }));
 
     const resolvedSlides =
@@ -64,7 +79,12 @@ export default function ImageSliderSection() {
                 <img
                     src={resolvedSlides[current].src}
                     alt={resolvedSlides[current].alt}
-                    className={`h-72 w-full object-cover sm:h-96 lg:h-[32rem] ${objectPositionClass[resolvedSlides[current].objectPosition] ?? 'object-center'}`}
+                    className="h-72 w-full object-cover sm:h-96 lg:h-[32rem]"
+                    style={{
+                        objectPosition:
+                            objectPositionStyle[resolvedSlides[current].objectPosition] ??
+                            'center center',
+                    }}
                     loading="lazy"
                 />
 
