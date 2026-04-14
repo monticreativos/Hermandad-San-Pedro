@@ -387,6 +387,7 @@ class DatabaseSeeder extends Seeder
                     'route_name' => 'contact.index',
                     'external_url' => null,
                 ],
+                'footer_collaborators' => [],
             ],
         );
 

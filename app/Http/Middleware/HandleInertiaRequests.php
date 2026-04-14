@@ -44,6 +44,9 @@ class HandleInertiaRequests extends Middleware
             ],
             'locale' => app()->getLocale(),
             'locales' => ['es', 'en'],
+            'cookieConsent' => [
+                'version' => (string) config('cookie-consent.version', '2026-04'),
+            ],
             'webSettings' => function (): ?array {
                 $setting = WebSetting::query()->find(1);
                 if ($setting === null) {

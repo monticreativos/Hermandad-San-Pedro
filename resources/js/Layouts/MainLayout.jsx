@@ -1,7 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, ChevronRight, Globe, MapPin, Menu as MenuIcon, MessageCircle, Send, Share2, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Globe, Menu as MenuIcon, MessageCircle, Send, Share2, X } from 'lucide-react';
 /* global route */
 import { useEffect, useMemo, useState } from 'react';
+import CookieConsentManager from '../Components/CookieConsentManager';
 import PageHero from '../Components/PageHero';
 
 const PAGE_HERO_EXCLUDED_ROUTES = new Set(['home', 'news.show']);
@@ -480,6 +481,32 @@ export default function MainLayout({ children }) {
             }));
     }, [locale, webSettings?.obra_social_submenu_items]);
 
+    const footerCollaborators = useMemo(() => {
+        const source = Array.isArray(webSettings?.footer_collaborators)
+            ? webSettings.footer_collaborators
+            : [];
+
+        return source
+            .filter((item) => item?.is_active !== false && item?.logo)
+            .sort((a, b) => (a?.sort ?? 999) - (b?.sort ?? 999))
+            .map((item, i) => {
+                const rawLogo = String(item.logo ?? '').trim();
+                if (!rawLogo) {
+                    return null;
+                }
+                const src = rawLogo.startsWith('http') ? rawLogo : `/storage/${rawLogo}`;
+                const name = String(item.name ?? '').trim() || `Colaborador ${i + 1}`;
+                const href = typeof item.url === 'string' && item.url.trim() !== '' ? item.url.trim() : null;
+
+                return {
+                    src,
+                    name,
+                    href,
+                };
+            })
+            .filter(Boolean);
+    }, [webSettings?.footer_collaborators]);
+
     const burgerMainItems = [
         { id: 'hermandad', kind: 'panel', label: locale === 'en' ? 'Brotherhood' : 'Hermandad' },
         ...sortedMenuRows
@@ -682,57 +709,141 @@ export default function MainLayout({ children }) {
                 {children}
             </main>
 
-            <footer className="mt-16 border-t border-zinc-200 bg-zinc-50">
-                <div className="mx-auto grid w-full max-w-[90rem] gap-8 px-4 py-10 sm:px-6 md:grid-cols-3 lg:px-8">
-                    <div>
-                        <h3 className="text-lg font-bold text-[#4b1f6f]">{t('footer.follow', 'Siguenos')}</h3>
-                        <div className="mt-4 flex items-center gap-3">
-                            <a
-                                href="https://instagram.com"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-xl border border-zinc-300 p-2 text-[#4b1f6f] hover:bg-[#4b1f6f]/10"
+            <footer className="mt-16 border-t border-zinc-200 bg-white">
+                <div className="mx-auto w-full max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8">
+                    <p className="text-center text-xs font-semibold uppercase tracking-[0.22em] text-zinc-500">
+                        {t('footer.sponsors', locale === 'en' ? 'Collaborators' : 'Colaboradores')}
+                    </p>
+
+                    <div className="mx-auto mt-8 grid max-w-6xl grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                        {footerCollaborators.map((item) => {
+                            const logo = (
+                                <img
+                                    src={item.src}
+                                    alt={item.name}
+                                    className="h-12 w-full object-contain sm:h-14"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            );
+
+                            return (
+                                <div
+                                    key={`${item.name}-${item.src}`}
+                                    className="flex h-16 items-center justify-center rounded-md border border-zinc-100 bg-white px-4"
+                                >
+                                    {item.href ? (
+                                        <a
+                                            href={item.href}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="flex w-full items-center justify-center"
+                                        >
+                                            {logo}
+                                        </a>
+                                    ) : (
+                                        logo
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                <div className="border-t border-zinc-200 bg-white">
+                    <div className="mx-auto flex w-full max-w-[90rem] flex-col gap-5 px-4 py-6 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+                        <div className="flex items-center gap-3">
+                            <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#4b1f6f]/20 bg-white">
+                                <img
+                                    src={HEADER_ESCUDO_SRC}
+                                    alt={locale === 'en' ? 'Brotherhood coat of arms' : 'Escudo de la Hermandad'}
+                                    className="h-full w-full object-contain p-0.5"
+                                    width={36}
+                                    height={36}
+                                    decoding="async"
+                                />
+                            </div>
+                            <p className="text-xs text-zinc-600 sm:text-sm">
+                                {locale === 'en'
+                                    ? `${brandName} © ${new Date().getFullYear()}. All rights reserved.`
+                                    : `${brandName} © ${new Date().getFullYear()}. Todos los derechos reservados.`}
+                            </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.72rem] font-medium text-zinc-600 sm:text-xs">
+                            <Link
+                                href={route('brotherhood.show', { locale, key: 'aviso-legal' })}
+                                className="hover:text-[#4b1f6f]"
                             >
-                                <MessageCircle size={18} />
-                            </a>
+                                {locale === 'en' ? 'Legal notice' : 'Aviso legal'}
+                            </Link>
+                            <span aria-hidden>•</span>
+                            <Link
+                                href={route('brotherhood.show', { locale, key: 'politica-privacidad' })}
+                                className="hover:text-[#4b1f6f]"
+                            >
+                                {locale === 'en' ? 'Privacy policy' : 'Politica de privacidad'}
+                            </Link>
+                            <span aria-hidden>•</span>
+                            <Link
+                                href={route('brotherhood.show', { locale, key: 'politica-cookies' })}
+                                className="hover:text-[#4b1f6f]"
+                            >
+                                {locale === 'en' ? 'Cookies policy' : 'Politica de cookies'}
+                            </Link>
+                            <span aria-hidden>•</span>
+                            <button
+                                type="button"
+                                onClick={() => window.dispatchEvent(new CustomEvent('open-cookie-settings'))}
+                                className="hover:text-[#4b1f6f]"
+                            >
+                                {locale === 'en' ? 'Cookie settings' : 'Gestion de cookies'}
+                            </button>
+                        </div>
+
+                        <div className="flex items-center gap-2">
                             <a
                                 href="https://facebook.com"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="rounded-xl border border-zinc-300 p-2 text-[#4b1f6f] hover:bg-[#4b1f6f]/10"
+                                aria-label="Facebook"
+                                className="rounded-full border border-zinc-300 p-2 text-zinc-600 transition hover:border-[#4b1f6f]/35 hover:bg-white hover:text-[#4b1f6f]"
                             >
-                                <Share2 size={18} />
+                                <Share2 size={16} />
+                            </a>
+                            <a
+                                href="https://instagram.com"
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="Instagram"
+                                className="rounded-full border border-zinc-300 p-2 text-zinc-600 transition hover:border-[#4b1f6f]/35 hover:bg-white hover:text-[#4b1f6f]"
+                            >
+                                <MessageCircle size={16} />
                             </a>
                             <a
                                 href="https://youtube.com"
                                 target="_blank"
                                 rel="noreferrer"
-                                className="rounded-xl border border-zinc-300 p-2 text-[#4b1f6f] hover:bg-[#4b1f6f]/10"
+                                aria-label="YouTube"
+                                className="rounded-full border border-zinc-300 p-2 text-zinc-600 transition hover:border-[#4b1f6f]/35 hover:bg-white hover:text-[#4b1f6f]"
                             >
-                                <Send size={18} />
+                                <Send size={16} />
+                            </a>
+                            <a
+                                href="https://x.com"
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="X"
+                                className="rounded-full border border-zinc-300 p-2 text-zinc-600 transition hover:border-[#4b1f6f]/35 hover:bg-white hover:text-[#4b1f6f]"
+                            >
+                                <Share2 size={16} />
                             </a>
                         </div>
                     </div>
-
-                    <div>
-                        <h3 className="text-lg font-bold text-[#4b1f6f]">{t('footer.address', 'Direccion')}</h3>
-                        <a
-                            href="https://maps.google.com/?q=Plaza+de+la+Constitucion+Sevilla"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="mt-4 inline-flex items-center gap-2 text-sm text-zinc-700 hover:text-[#4b1f6f]"
-                        >
-                            <MapPin size={16} />
-                            Plaza de la Constitucion, Sevilla
-                        </a>
-                    </div>
-
-                    <div>
-                        <h3 className="text-lg font-bold text-[#4b1f6f]">{t('footer.hours', 'Horario de secretaria')}</h3>
-                        <p className="mt-4 text-sm text-zinc-700">{t('footer.hours.value', 'Lunes a viernes, 19:30 - 21:30')}</p>
-                    </div>
                 </div>
             </footer>
+
+            <CookieConsentManager />
         </div>
     );
 }

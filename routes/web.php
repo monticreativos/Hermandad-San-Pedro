@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\BrotherhoodPageController;
+use App\Http\Controllers\CookieConsentController;
 use App\Http\Controllers\CultosPageController;
-use App\Http\Controllers\ObraSocialPageController;
-use App\Http\Controllers\PatrimonioPageController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\MemberApplicationController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\ObraSocialPageController;
+use App\Http\Controllers\PatrimonioPageController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShopController;
 use App\Models\Event;
 use App\Models\News;
@@ -101,6 +102,9 @@ Route::prefix('{locale}')
         Route::get('/obra-social/{key}', [ObraSocialPageController::class, 'show'])
             ->whereIn('key', ['labor-asistencial', 'diputacion-caridad', 'obra-asistencial'])
             ->name('obra_social.show');
+
+        Route::post('/cookie-consent', [CookieConsentController::class, 'store'])
+            ->name('cookie-consent.store');
     });
 
 Route::get('/dashboard', function () {

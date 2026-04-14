@@ -75,6 +75,49 @@ class WebSettingForm
                                             ->url()
                                             ->maxLength(500)
                                             ->helperText('Si se rellena, la pagina Tienda mostrara un boton para abrirla en nueva pestana.'),
+                                        Section::make('Footer: colaboradores')
+                                            ->description('Logos de colaboradores mostrados en el pie de la web. Fondo blanco y rejilla responsive.')
+                                            ->schema([
+                                                Repeater::make('footer_collaborators')
+                                                    ->label('Colaboradores')
+                                                    ->schema([
+                                                        FileUpload::make('logo')
+                                                            ->label('Logo')
+                                                            ->image()
+                                                            ->disk('public')
+                                                            ->directory('footer-collaborators')
+                                                            ->imageEditor()
+                                                            ->imageEditorAspectRatioOptions([
+                                                                '4/3',
+                                                                '3/2',
+                                                                '1/1',
+                                                                null,
+                                                            ])
+                                                            ->required(fn (): bool => self::activeMainTab() === 'general'),
+                                                        TextInput::make('name')
+                                                            ->label('Nombre (alt)')
+                                                            ->maxLength(120)
+                                                            ->required(fn (): bool => self::activeMainTab() === 'general'),
+                                                        TextInput::make('url')
+                                                            ->label('URL (opcional)')
+                                                            ->url()
+                                                            ->placeholder('https://...')
+                                                            ->maxLength(500),
+                                                        TextInput::make('sort')
+                                                            ->label('Orden')
+                                                            ->numeric()
+                                                            ->default(1)
+                                                            ->required(fn (): bool => self::activeMainTab() === 'general'),
+                                                        Toggle::make('is_active')
+                                                            ->label('Activo')
+                                                            ->default(true),
+                                                    ])
+                                                    ->defaultItems(0)
+                                                    ->reorderableWithButtons()
+                                                    ->collapsed()
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->columnSpanFull(),
                                     ]),
                             ]),
                         Tab::make('Menu principal')

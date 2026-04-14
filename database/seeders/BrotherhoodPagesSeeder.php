@@ -55,6 +55,18 @@ HTML,
                 ['key' => 'junta-gobierno'],
                 require __DIR__.'/content/brotherhood_junta_gobierno.php'
             ),
+            array_merge(
+                ['key' => 'aviso-legal'],
+                require __DIR__.'/content/brotherhood_aviso_legal.php'
+            ),
+            array_merge(
+                ['key' => 'politica-privacidad'],
+                require __DIR__.'/content/brotherhood_politica_privacidad.php'
+            ),
+            array_merge(
+                ['key' => 'politica-cookies'],
+                require __DIR__.'/content/brotherhood_politica_cookies.php'
+            ),
         ];
 
         foreach ($brotherhoodPages as $page) {

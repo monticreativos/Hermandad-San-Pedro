@@ -26,6 +26,7 @@ class WebSetting extends Model
         'donation_card_title',
         'donation_blocks',
         'donation_footer',
+        'footer_collaborators',
     ];
 
     protected function casts(): array
@@ -45,6 +46,7 @@ class WebSetting extends Model
             'donation_card_title' => 'array',
             'donation_blocks' => 'array',
             'donation_footer' => 'array',
+            'footer_collaborators' => 'array',
         ];
     }
 }

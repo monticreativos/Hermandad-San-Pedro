@@ -27,6 +27,9 @@ class BrotherhoodPageForm
                         'heraldica-simbolos' => 'Heráldica y símbolos',
                         'reglas-reglamentos' => 'Reglas y Reglamentos',
                         'junta-gobierno' => 'Junta de Gobierno',
+                        'aviso-legal' => 'Aviso legal',
+                        'politica-privacidad' => 'Política de privacidad',
+                        'politica-cookies' => 'Política de cookies',
                     ])
                     ->required()
                     ->live()
